@@ -1,0 +1,93 @@
+import { motion } from 'framer-motion';
+import { Button } from '../components/ui';
+import { Mail, Lock, ArrowRight, Github } from 'lucide-react';
+
+export default function Register() {
+    return (
+        <div className="min-h-screen pt-24 pb-12 flex flex-col justify-center items-center px-6">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-md"
+            >
+                <div className="glass-card p-8 bg-secondary-custom/40">
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-bold mb-2">Join CODEARENA</h1>
+                        <p className="text-foreground-custom/40">Create your account to start building</p>
+                    </div>
+
+                    <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-foreground-custom/70 ml-1">First Name</label>
+                                <input
+                                    type="text"
+                                    className="w-full bg-background-custom/50 border border-border-custom rounded-xl py-2.5 px-4 focus:ring-2 focus:ring-primary/50 outline-none transition-all"
+                                    placeholder="John"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-foreground-custom/70 ml-1">Last Name</label>
+                                <input
+                                    type="text"
+                                    className="w-full bg-background-custom/50 border border-border-custom rounded-xl py-2.5 px-4 focus:ring-2 focus:ring-primary/50 outline-none transition-all"
+                                    placeholder="Doe"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground-custom/70 ml-1">Email Address</label>
+                            <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-custom/30" size={18} />
+                                <input
+                                    type="email"
+                                    className="w-full bg-background-custom/50 border border-border-custom rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-primary/50 outline-none transition-all"
+                                    placeholder="name@university.edu"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground-custom/70 ml-1">Password</label>
+                            <div className="relative">
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-custom/30" size={18} />
+                                <input
+                                    type="password"
+                                    className="w-full bg-background-custom/50 border border-border-custom rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-primary/50 outline-none transition-all"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                        </div>
+
+                        <Button className="w-full py-4 group">
+                            Create Account
+                            <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
+                        </Button>
+
+                        <div className="relative my-6">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-border-custom"></div>
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-secondary-custom px-2 text-foreground-custom/30">Or continue with</span>
+                            </div>
+                        </div>
+
+                        <Button variant="secondary" className="w-full py-3 flex items-center justify-center gap-2">
+                            <Github size={20} />
+                            GitHub
+                        </Button>
+                    </form>
+
+                    <div className="mt-8 pt-8 border-t border-border-custom text-center">
+                        <p className="text-foreground-custom/40 text-sm">
+                            Already have an account?{' '}
+                            <a href="#" className="text-primary font-medium hover:underline">Sign in</a>
+                        </p>
+                    </div>
+                </div>
+            </motion.div>
+        </div>
+    );
+}
