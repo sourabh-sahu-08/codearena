@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Github, Globe, Save, Plus, X, Award, Briefcase, Cpu } from 'lucide-react';
 import { Button, Card } from '../ui';
+import { useHackathon } from '../../context/HackathonContextState';
 
 const availableSkills = [
     'React', 'TypeScript', 'Node.js', 'Python', 'AWS', 'Docker', 'Tailwind CSS',
@@ -9,7 +10,9 @@ const availableSkills = [
 ];
 
 export default function ProfileSetup() {
+    const { state } = useHackathon();
     const [skills, setSkills] = useState(['React', 'TypeScript', 'Node.js']);
+
 
     const addSkill = (skill: string) => {
         if (!skills.includes(skill)) {
@@ -39,7 +42,7 @@ export default function ProfileSetup() {
                                 <Plus size={16} />
                             </button>
                         </div>
-                        <h3 className="text-xl font-bold">sourabh</h3>
+                        <h3 className="text-xl font-bold">{state.user?.name || 'Warrior'}</h3>
                         <p className="text-slate-500 text-sm">Full Stack Developer</p>
                         <div className="mt-6 flex justify-center gap-4">
                             <Github size={18} className="text-slate-400 hover:text-white cursor-pointer transition-colors" />
@@ -77,7 +80,7 @@ export default function ProfileSetup() {
                                 <label className="text-xs font-bold uppercase tracking-widest text-slate-500">Full Name</label>
                                 <input
                                     type="text"
-                                    defaultValue="sourabh"
+                                    defaultValue={state.user?.name || ''}
                                     className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary-custom/50"
                                 />
                             </div>

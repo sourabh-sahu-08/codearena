@@ -5,13 +5,17 @@ import { Button } from '../components/ui';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 import { useHackathon } from '../context/HackathonContextState';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loginType, setLoginType] = useState<'user' | 'operator'>('user');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const { setStatus } = useHackathon();
+    const { login } = useHackathon();
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -19,7 +23,7 @@ export default function Login() {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/login', {
+            const response = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -31,15 +35,14 @@ export default function Login() {
                 throw new Error(data.message || 'Login failed');
             }
 
-            localStorage.setItem('codearena_token', data.token);
-            localStorage.setItem('codearena_user', JSON.stringify(data.user));
+            login(data.user, data.token);
 
-            if (data.user.role === 'admin') {
-                setStatus('live');
-                navigate('/dashboard?tab=admin');
+            if (data.user.role === 'operator') {
+                navigate('/operator-dashboard');
             } else {
                 navigate('/dashboard');
             }
+
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -56,8 +59,33 @@ export default function Login() {
             >
                 <div className="glass-card p-8 bg-secondary-custom/40">
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
-                        <p className="text-foreground-custom/40">Sign in to your CODEARENA account</p>
+                        <h1 className="text-3xl font-bold mb-2">
+                            {loginType === 'operator' ? 'Operator Portal' : 'Welcome Back'}
+                        </h1>
+                        <p className="text-foreground-custom/40">
+                            {loginType === 'operator' ? 'Manage Bharat\'s best talent' : 'Sign in to your CODEARENA account'}
+                        </p>
+                    </div>
+
+                    <div className="flex p-1 bg-background-custom/50 border border-border-custom rounded-xl mb-8">
+                        <button
+                            onClick={() => setLoginType('user')}
+                            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${loginType === 'user'
+                                ? 'bg-primary-custom text-white shadow-lg shadow-primary-custom/20'
+                                : 'text-foreground-custom/40 hover:text-foreground-custom'
+                                }`}
+                        >
+                            Participant
+                        </button>
+                        <button
+                            onClick={() => setLoginType('operator')}
+                            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${loginType === 'operator'
+                                ? 'bg-accent-custom text-white shadow-lg shadow-accent-custom/20'
+                                : 'text-foreground-custom/40 hover:text-foreground-custom'
+                                }`}
+                        >
+                            Operator
+                        </button>
                     </div>
 
                     {error && (
@@ -100,8 +128,8 @@ export default function Login() {
                             </div>
                         </div>
 
-                        <Button className="w-full py-4 group" disabled={isLoading}>
-                            {isLoading ? 'Signing In...' : 'Sign In'}
+                        <Button className={`w-full py-4 group ${loginType === 'operator' ? 'bg-accent-custom hover:opacity-90 border-none' : ''}`} disabled={isLoading}>
+                            {isLoading ? 'Authenticating...' : `Sign In as ${loginType === 'operator' ? 'Operator' : 'Participant'}`}
                             <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
                         </Button>
                     </form>

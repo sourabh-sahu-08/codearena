@@ -20,8 +20,10 @@ import {
     X as CloseIcon,
     Moon,
     Sun,
-    ShieldAlert
+    ShieldAlert,
+    ShieldCheck
 } from 'lucide-react';
+
 import { Button, Card } from '../components/ui';
 import TeamRecommendations from '../components/dashboard/TeamRecommendations';
 import CodingIDE from '../components/dashboard/CodingIDE';
@@ -30,10 +32,7 @@ import ProjectSubmission from '../components/dashboard/ProjectSubmission';
 import Leaderboard from '../components/dashboard/Leaderboard';
 import ProfileSetup from '../components/dashboard/ProfileSetup';
 import ProblemStatements from '../components/dashboard/ProblemStatements';
-import JudgeDashboard from '../components/dashboard/JudgeDashboard';
 import CertificationUI from '../components/dashboard/CertificationUI';
-import InterviewPortal from '../components/dashboard/InterviewPortal';
-import AdminControlPanel from '../components/dashboard/AdminControlPanel';
 import { useHackathon } from '../context/HackathonContextState';
 
 const sidebarItems = [
@@ -46,21 +45,18 @@ const sidebarItems = [
     { id: 'projects', icon: Rocket, label: 'Submissions' },
     { id: 'chatbot', icon: MessageSquare, label: 'AI Assistant' },
     { id: 'leaderboard', icon: BarChart3, label: 'Leaderboard' },
-    { id: 'judge', icon: Shield, label: 'Judge Panel' },
-    { id: 'admin', icon: ShieldAlert, label: 'Admin Control' },
     { id: 'certification', icon: Award, label: 'Certification' },
 ];
 
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
-    const { state } = useHackathon();
+    const { state, logout } = useHackathon();
     const location = useLocation();
+    const navigate = useNavigate();
 
-    // Default to 'admin' if path is /admin, otherwise 'overview'
-    const [activeTab, setActiveTab] = React.useState(
-        location.pathname === '/admin' ? 'admin' : 'overview'
-    );
+
+    const [activeTab, setActiveTab] = React.useState('overview');
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
     const [theme, setTheme] = React.useState<'dark' | 'light'>(
         document.documentElement.classList.contains('light-mode') ? 'light' : 'dark'
@@ -79,7 +75,8 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-background-custom text-foreground-custom flex overflow-hidden font-inter relative">
+        <div className="min-h-screen bg-[#020617] text-foreground-custom flex overflow-hidden font-inter relative selection:bg-primary-custom/30">
+
             {/* Premium Gradient Blobs */}
             <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary-custom/5 blur-[120px] rounded-full z-0 pointer-events-none" />
             <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent-custom/5 blur-[120px] rounded-full z-0 pointer-events-none" />
@@ -141,7 +138,13 @@ export default function Dashboard() {
                         <p className="text-[10px] text-foreground-custom/30 relative z-10">75% complete setup</p>
                     </div>
 
-                    <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-foreground-custom/50 hover:bg-red-500/10 hover:text-red-500 transition-all">
+                    <button
+                        onClick={() => {
+                            logout();
+                            navigate('/login');
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-foreground-custom/50 hover:bg-red-500/10 hover:text-red-500 transition-all"
+                    >
                         <LogOut size={20} />
                         <span className="font-medium text-sm">Logout</span>
                     </button>
@@ -194,20 +197,36 @@ export default function Dashboard() {
                                 exit={{ opacity: 0, y: -10 }}
                                 className="space-y-8"
                             >
-                                <div className="flex flex-col md:flex-row gap-8 items-center bg-secondary-custom/20 border border-white/5 rounded-3xl p-8 backdrop-blur-sm relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                        <Rocket size={200} />
+                                <div className="flex flex-col md:flex-row gap-8 items-center bg-[#020617]/40 border border-white/5 rounded-[2.5rem] p-10 backdrop-blur-xl relative overflow-hidden group shadow-2xl">
+                                    <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-primary-custom/10 blur-[100px] rounded-full group-hover:bg-primary-custom/20 transition-all duration-700" />
+                                    <div className="absolute bottom-[-20%] left-[-10%] w-[200px] h-[200px] bg-accent-custom/10 blur-[80px] rounded-full group-hover:bg-accent-custom/20 transition-all duration-700" />
+                                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-all duration-500 scale-110 group-hover:scale-125 rotate-12 group-hover:rotate-6">
+                                        <Rocket size={240} className="text-primary-custom" />
                                     </div>
+
                                     <div className="flex-1 space-y-4 relative z-10">
                                         <div className="flex items-center gap-2 mb-2">
-                                            <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
+                                            <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase tracking-widest border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
                                                 System Online
                                             </span>
                                             <span className="px-3 py-1 rounded-full bg-primary-custom/10 text-primary-custom text-[10px] font-black uppercase tracking-widest border border-primary-custom/20">
-                                                {state.status} Phase
+                                                {state.settings?.phase || state.status} Phase
                                             </span>
                                         </div>
-                                        <h2 className="text-4xl font-black tracking-tight">Command Center <span className="text-gradient">sourabh!</span></h2>
+                                        <h2 className="text-4xl font-black tracking-tight flex items-center gap-3">
+                                            Command Center
+                                            <span className="text-gradient">{state.user?.name?.split(' ')[0] || 'Warrior'}!</span>
+                                            {state.user?.isVerified && (
+                                                <motion.div
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    className="inline-flex items-center justify-center p-1 rounded-full bg-blue-500/20 border border-blue-500/30"
+                                                    title="Verified Participant"
+                                                >
+                                                    <ShieldCheck size={20} className="text-blue-400" />
+                                                </motion.div>
+                                            )}
+                                        </h2>
                                         <p className="text-foreground-custom/40 text-lg max-w-xl leading-relaxed">
                                             Infrastructure is stable. Your current submission velocity is in the <span className="text-foreground-custom">top 5%</span>.
                                             The {state.currentTrack || 'Main'} track is seeing high activity.
@@ -287,10 +306,10 @@ export default function Dashboard() {
                                         <h3 className="font-bold text-lg mb-6">Team Formation</h3>
                                         <div className="space-y-4">
                                             {[
-                                                { name: 'sourabh', role: 'Full Stack', Initial: 'SO' },
-                                            { name: 'shashank', role: 'UI Designer', Initial: 'SH' },
-                                            { name: 'yashwant', role: 'DevOps', Initial: 'YA' },
-                                            { name: 'vaibhav', role: 'Security', Initial: 'VA' },
+                                                { name: state.user?.name?.split(' ')[0] || 'Leader', role: 'Full Stack', Initial: state.user?.name?.charAt(0) || 'L' },
+                                                { name: 'shashank', role: 'UI Designer', Initial: 'SH' },
+                                                { name: 'yashwant', role: 'DevOps', Initial: 'YA' },
+                                                { name: 'vaibhav', role: 'Security', Initial: 'VA' },
                                             ].map((member, k) => (
                                                 <div key={k} className="flex items-center justify-between p-3 rounded-xl bg-foreground-custom/5 border border-border-custom">
                                                     <div className="flex items-center gap-3">
@@ -382,39 +401,6 @@ export default function Dashboard() {
                             </motion.div>
                         )}
 
-                        {activeTab === 'tracks' && (
-                            <motion.div
-                                key="tracks"
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                            >
-                                <ProblemStatements />
-                            </motion.div>
-                        )}
-
-                        {activeTab === 'interview' && (
-                            <motion.div
-                                key="interview"
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                            >
-                                <InterviewPortal />
-                            </motion.div>
-                        )}
-
-                        {activeTab === 'judge' && (
-                            <motion.div
-                                key="judge"
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                            >
-                                <JudgeDashboard />
-                            </motion.div>
-                        )}
-
                         {activeTab === 'certification' && (
                             <motion.div
                                 key="certification"
@@ -423,17 +409,6 @@ export default function Dashboard() {
                                 exit={{ opacity: 0, y: -10 }}
                             >
                                 <CertificationUI />
-                            </motion.div>
-                        )}
-
-                        {activeTab === 'admin' && (
-                            <motion.div
-                                key="admin"
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                            >
-                                <AdminControlPanel />
                             </motion.div>
                         )}
                     </AnimatePresence>

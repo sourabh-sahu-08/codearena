@@ -1,9 +1,11 @@
-import React from 'react';
 import { Download, Share2, Award, CheckCircle2, ShieldCheck, Printer } from 'lucide-react';
 import { Button, Card } from '../ui';
+import { useHackathon } from '../../context/HackathonContextState';
 
 export default function CertificationUI() {
+    const { state } = useHackathon();
     return (
+
         <div className="max-w-4xl mx-auto space-y-10 pb-20">
             <div className="text-center space-y-4">
                 <h2 className="text-4xl font-bold">Certification</h2>
@@ -37,7 +39,7 @@ export default function CertificationUI() {
                             </div>
 
                             <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold tracking-tight text-foreground-custom py-4 font-serif italic">
-                                sourabh
+                                {state.user?.name || 'Warrior'}
                             </h1>
 
                             <p className="text-foreground-custom/70 max-w-2xl mx-auto leading-relaxed">

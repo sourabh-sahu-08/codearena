@@ -11,18 +11,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowe
     const { state } = useHackathon();
     const location = useLocation();
 
-    // bypass authentication during development (returns dashboard directly)
-    // if (state.userRole === 'guest') {
-    //     return <Navigate to="/login" state={{ from: location }} replace />;
-    // }
-
-    // optional: you can force a default role in state to avoid further redirects
     if (state.userRole === 'guest') {
-        state.userRole = 'participant';
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     if (allowedRoles && !allowedRoles.includes(state.userRole)) {
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to={state.userRole === 'operator' ? '/operator-dashboard' : '/dashboard'} replace />;
     }
 
     return <>{children}</>;

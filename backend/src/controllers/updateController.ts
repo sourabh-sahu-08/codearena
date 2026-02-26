@@ -9,3 +9,14 @@ export const getUpdates = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Failed to fetch updates' });
     }
 };
+
+export const createUpdate = async (req: Request, res: Response) => {
+    try {
+        const { title, description, type } = req.body;
+        const update = new Update({ title, description, type });
+        await update.save();
+        res.status(201).json(update);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to create update' });
+    }
+};

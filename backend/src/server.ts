@@ -7,6 +7,8 @@ import statsRoutes from './routes/statsRoutes.js';
 import updateRoutes from './routes/updateRoutes.js';
 import problemRoutes from './routes/problemRoutes.js';
 import submissionRoutes from './routes/submissionRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import hackathonRoutes from './routes/hackathonRoutes.js';
 
 dotenv.config();
 
@@ -23,6 +25,8 @@ app.use('/api/stats', statsRoutes);
 app.use('/api/updates', updateRoutes);
 app.use('/api/problems', problemRoutes);
 app.use('/api/submissions', submissionRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/hackathon', hackathonRoutes);
 
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });

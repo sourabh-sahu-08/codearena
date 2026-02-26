@@ -1,8 +1,11 @@
 import { Video, Mic, PhoneOff, MessageSquare, Users, Settings, Plus } from 'lucide-react';
 import { Button, Card } from '../ui';
+import { useHackathon } from '../../context/HackathonContextState';
 
 export default function InterviewPortal() {
+    const { state } = useHackathon();
     return (
+
         <div className="h-[calc(100vh-160px)] flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
@@ -30,7 +33,7 @@ export default function InterviewPortal() {
                         <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 to-transparent z-10 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-green-500" />
-                                <span className="text-sm font-semibold text-white">sourabh (You)</span>
+                                <span className="text-sm font-semibold text-white">{state.user?.name?.split(' ')[0] || 'Warrior'} (You)</span>
                             </div>
                             <div className="flex gap-2">
                                 <div className="p-1.5 rounded-lg bg-white/10 backdrop-blur-md text-white"><Mic size={14} /></div>

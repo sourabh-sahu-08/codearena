@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from '../models/User';
+import User from '../models/User.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'codearena_super_secret_key';
 
@@ -20,7 +20,7 @@ export const signup = async (req: Request, res: Response) => {
             name,
             email,
             password: hashedPassword,
-            role: role || 'user',
+            role: (role === 'operator' || role === 'user') ? role : 'user',
         });
 
         await user.save();
@@ -31,7 +31,8 @@ export const signup = async (req: Request, res: Response) => {
             { expiresIn: '1d' }
         );
 
-        res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+        res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role, isVerified: user.isVerified } });
+
     } catch (error) {
         res.status(500).json({ message: 'Something went wrong' });
     }
@@ -57,7 +58,8 @@ export const login = async (req: Request, res: Response) => {
             { expiresIn: '1d' }
         );
 
-        res.status(200).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+        res.status(200).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role, isVerified: user.isVerified } });
+
     } catch (error) {
         res.status(500).json({ message: 'Something went wrong' });
     }

@@ -2,14 +2,20 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui';
-import { Mail, Lock, ArrowRight, Github, User } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Github, User as UserIcon } from 'lucide-react';
+import { useHackathon } from '../context/HackathonContextState';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Register() {
+    const { login } = useHackathon();
     const [formData, setFormData] = useState({
+
         firstName: '',
         lastName: '',
         email: '',
         password: '',
+        role: 'user' as 'user' | 'operator',
     });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -25,13 +31,14 @@ export default function Register() {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/signup', {
+            const response = await fetch(`${API_URL}/api/auth/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: `${formData.firstName} ${formData.lastName}`,
                     email: formData.email,
                     password: formData.password,
+                    role: formData.role,
                 }),
             });
 
@@ -41,8 +48,14 @@ export default function Register() {
                 throw new Error(data.message || 'Registration failed');
             }
 
-            // go straight to dashboard after successful registration
-            navigate('/dashboard');
+            login(data.user, data.token);
+
+            if (data.user.role === 'operator') {
+                navigate('/operator-dashboard');
+            } else {
+                navigate('/dashboard');
+            }
+
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -59,8 +72,35 @@ export default function Register() {
             >
                 <div className="glass-card p-8 bg-secondary-custom/40">
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold mb-2">Join CODEARENA</h1>
-                        <p className="text-foreground-custom/40">Create your account to start building</p>
+                        <h1 className="text-3xl font-bold mb-2">
+                            {formData.role === 'operator' ? 'Join as Operator' : 'Join CODEARENA'}
+                        </h1>
+                        <p className="text-foreground-custom/40">
+                            {formData.role === 'operator' ? 'Empower Bharat\'s best talent' : 'Create your account to start building'}
+                        </p>
+                    </div>
+
+                    <div className="flex p-1 bg-background-custom/50 border border-border-custom rounded-xl mb-8">
+                        <button
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, role: 'user' }))}
+                            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${formData.role === 'user'
+                                ? 'bg-primary-custom text-white shadow-lg shadow-primary-custom/20'
+                                : 'text-foreground-custom/40 hover:text-foreground-custom'
+                                }`}
+                        >
+                            Participant
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, role: 'operator' }))}
+                            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${formData.role === 'operator'
+                                ? 'bg-accent-custom text-white shadow-lg shadow-accent-custom/20'
+                                : 'text-foreground-custom/40 hover:text-foreground-custom'
+                                }`}
+                        >
+                            Operator
+                        </button>
                     </div>
 
                     {error && (
@@ -129,8 +169,8 @@ export default function Register() {
                             </div>
                         </div>
 
-                        <Button className="w-full py-4 group" disabled={isLoading}>
-                            {isLoading ? 'Creating Account...' : 'Create Account'}
+                        <Button className={`w-full py-4 group ${formData.role === 'operator' ? 'bg-accent-custom hover:opacity-90 border-none' : ''}`} disabled={isLoading}>
+                            {isLoading ? 'Creating Account...' : `Create ${formData.role === 'operator' ? 'Operator' : ''} Account`}
                             <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
                         </Button>
                     </form>

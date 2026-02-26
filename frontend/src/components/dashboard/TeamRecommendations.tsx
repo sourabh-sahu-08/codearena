@@ -4,7 +4,7 @@ import { Button, Card } from '../ui';
 
 const recommendations = [
     {
-        name: 'sourabh',
+        name: 'Candidate A',
         skills: ['React', 'Node.js', 'AWS'],
         match: 98,
         interests: ['FinTech', 'Scalability'],

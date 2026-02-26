@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import ManagementPortal from './pages/ManagementPortal';
 import ExplorationHub from './pages/ExplorationHub';
 import { HackathonProvider } from './context/HackathonContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -144,13 +145,13 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['user']}>
               <Dashboard />
             </ProtectedRoute>
           } />
-          <Route path="/admin" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <Dashboard />
+          <Route path="/operator-dashboard" element={
+            <ProtectedRoute allowedRoles={['operator']}>
+              <ManagementPortal />
             </ProtectedRoute>
           } />
         </Routes>
@@ -160,3 +161,5 @@ function App() {
 }
 
 export default App;
+// Resolved dashboard role management
+
